@@ -12,6 +12,8 @@ so to do simularity_score() in graph.py:
 - we need to call steps 1-2 on the zara description
 - then we gonna go through each list and see if there any similar words, and if there is then the score goes up by one
 - i was thinking to make the score out of 30? ( in the astica code i made it that the description gives max 30 words)
+
+- one thing, synonym_extractor() gives some really random synonyms. so im thinking incase it comes that there are NO similar words between the item and the user then maybe we call the cosine simulaity?
 """
 
 
