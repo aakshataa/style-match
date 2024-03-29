@@ -97,9 +97,15 @@ def filter_out_stop_words(path)-> list:
         if w not in stop_words:
             filtered_sentence.append(w)
 
+    clothes = ['shirt', 'short', 'skirt', 'dress', 'jacket', 'pants', 'leggings', 'jeans', 'top', 'bottom', 'sweater', 'crop top', 'vest']
+    clothes_in_description = []
+    for things in filtered_sentence:
+        if things in clothes:
+            clothes_in_description.append(things)
+
     tags = nltk.pos_tag(filtered_sentence)
     adjectives = [w for w, t in tags if t == 'JJ']
-    return adjectives
+    return adjectives + clothes_in_description
 
 def synonym_extractor(phrase):
     from nltk.corpus import wordnet
