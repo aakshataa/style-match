@@ -1,7 +1,8 @@
 """
 basically what this file does:
 
-1. given an image_path, it first goes through astica_description() and we are returned a description ( i edited the code to alter the type/lenght of description)
+1. given an image_path, it first goes through astica_description() and we are returned a description ( i edited the code to alter the 
+   type/lenght of description)
 2. then it goes into fitering_out_stop_words() where stop words and adjectives are removed
 3. then it goes into the synonym_extractor() and we are returned a dictionary w all the synomym with the key words
 
@@ -13,7 +14,8 @@ so to do simularity_score() in graph.py:
 - then we gonna go through each list and see if there any similar words, and if there is then the score goes up by one
 - i was thinking to make the score out of 30? ( in the astica code i made it that the description gives max 30 words)
 
-- one thing, synonym_extractor() gives some really random synonyms. so im thinking incase it comes that there are NO similar words between the item and the user then maybe we call the cosine simulaity?
+- one thing, synonym_extractor() gives some really random synonyms. so im thinking incase it comes that there are NO similar word
+  between the item and the user then maybe we call the cosine simulaity?
 """
 
 
