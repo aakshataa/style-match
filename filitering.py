@@ -86,7 +86,7 @@ def astica_description(path:str):
 
 def filter_out_stop_words(path)-> list:
     stop_words = set(stopwords.words('english'))
-    path = 'dress.png'
+    path = 'dress.png' ## temp for now incase we wanna do testing
     user_description = astica_description(path)
     word_tokens = word_tokenize(user_description)
 
