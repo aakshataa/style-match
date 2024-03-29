@@ -4,6 +4,11 @@ basically what this file does:
 1. given an image_path, it first goes through astica_description() and we are returned a description ( i edited the code to alter the 
    type/lenght of description)
 2. then it goes into fitering_out_stop_words() where stop words and adjectives are removed
+        --> in this i added a list clothes and clothes in description. so basically its taking the list that has all the stop words 
+           removed and seeing if it mentions any specfic article of clothing. then after it adds it to the final returned list.
+           this is because after i run the code that filters out adjectives it SOMETIMES removes the type of clothing item
+       --> so i am adding this in after just so when we do the sim score we are also checking if we are comparing 
+           [black, shiney, skirt] and not just [ black , shiney] 
 3. then it goes into the synonym_extractor() and we are returned a dictionary w all the synomym with the key words
 
 
