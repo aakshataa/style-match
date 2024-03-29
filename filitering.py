@@ -93,3 +93,4 @@ def synonym_antonym_extractor(phrase):
 
 fiter = filter_out_stop_words('dress.png')
 s = synonym_antonym_extractor(fiter)
+print(s)
