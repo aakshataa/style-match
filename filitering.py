@@ -1,3 +1,13 @@
+"""
+basically what this file does:
+
+1. given an image_path, it first goes through astica_description() and we are returned a description ( i edited the code to alter the type/lenght of description)
+2. then it goes into fitering_out_stop_words() where stop words and adjectives are removed
+3. then it goes into the synonym_extractor() and we are returned a dictionary w all the synomym with the key words
+"""
+
+
+
 import requests
 import json
 import base64
@@ -79,7 +89,7 @@ def filter_out_stop_words(path)-> list:
     adjectives = [w for w, t in tags if t == 'JJ']
     return adjectives
 
-def synonym_antonym_extractor(phrase):
+def synonym_extractor(phrase):
     from nltk.corpus import wordnet
     word_dict={}
 
@@ -92,5 +102,5 @@ def synonym_antonym_extractor(phrase):
     return word_dict
 
 fiter = filter_out_stop_words('dress.png')
-s = synonym_antonym_extractor(fiter)
+s = synonym_extractor(fiter)
 print(s)
