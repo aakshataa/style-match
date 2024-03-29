@@ -159,7 +159,7 @@ def create_clothing_item(g: WeightedGraph, item_description: str) -> str:
         create_edge(g, item_id, other_id)
 
     return item_id
-g
+
 
 if __name__ == '__main__':
 
