@@ -23,8 +23,6 @@ so to do simularity_score() in graph.py:
   between the item and the user then maybe we call the cosine simulaity?
 """
 
-
-
 import requests
 import json
 import base64
@@ -64,8 +62,8 @@ def astica_description(path:str):
     asticaAPI_input = get_image_base64_encoding(path)  # use base64 image input (slower)
 
     asticaAPI_visionParams = 'gpt_detailed,describe,color,categories'  # comma separated, defaults to "all".
-    asticaAPI_gpt_prompt = ''  # only used if visionParams includes "gpt" or "gpt_detailed"
-    asticaAPI_prompt_length = '30'  # number of words in GPT response
+    asticaAPI_gpt_prompt = ' write a detailed description of the clothing item'  # only used if visionParams includes "gpt" or "gpt_detailed"
+    asticaAPI_prompt_length = '15'  # number of words in GPT response
 
     # Define payload dictionary
     asticaAPI_payload = {
@@ -89,10 +87,11 @@ def astica_description(path:str):
                 long_caption = asticaAPI_result['caption_GPTS']
                 return long_caption
 
+
 def filter_out_stop_words(path)-> list:
     stop_words = set(stopwords.words('english'))
-    path = 'dress.png' ## temp for now incase we wanna do testing
     user_description = astica_description(path)
+    print(astica_description(path))
     word_tokens = word_tokenize(user_description)
 
     filtered_sentence = [w for w in word_tokens if not w.lower() in stop_words]
@@ -112,18 +111,24 @@ def filter_out_stop_words(path)-> list:
     adjectives = [w for w, t in tags if t == 'JJ']
     return adjectives + clothes_in_description
 
+
 def synonym_extractor(phrase):
     from nltk.corpus import wordnet
     word_dict={}
-
+ 
     for word in phrase:
+        if word in ['black', 'white', 'blue', 'pink', 'purple', 'yellow', 'red', 'orange', 'green', 'gold', 'silver']:
+            word_dict.update({word: word})
+            continue
         s = []
         for syn in wordnet.synsets(word):
             for l in syn.lemmas():
                 s.append(l.name())
-        word_dict.update({word:s})
+        word_dict.update({word: set(s)})
     return word_dict
 
-fiter = filter_out_stop_words('dress.png')
+
+fiter = filter_out_stop_words('blazer.png')
+print(fiter)
 s = synonym_extractor(fiter)
 print(s)
