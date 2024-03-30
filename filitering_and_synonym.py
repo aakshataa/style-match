@@ -13,15 +13,29 @@ basically what this file does:
 
 
 so to do simularity_score() in graph.py:
-
 - we need to call steps 1-3 on the users uploaded image
-- we need to call steps 1-2 on the zara description
+- we need to call step 2 on the zara description
 - then we gonna go through each list and see if there any similar words, and if there is then the score goes up by one
-- i was thinking to make the score out of 30? ( in the astica code i made it that the description gives max 30 words)
-
-- one thing, synonym_extractor() gives some really random synonyms. so im thinking incase it comes that there are NO similar word
-  between the item and the user then maybe we call the cosine simulaity?
+- i was thinking to make the score out of 15? ( in the astica code i made it that the description gives max 15 words)   
 """
+
+#### STARTER CODE FOR sim_score() IN graph.py, WE GOTTA EDIT IT IDK HOW TO DO THE SCORE####
+def sim_score(self, zara_description:str, image_path:str): -> float
+
+   # user
+   user_image = filter_out_all(image_path)
+   user_synonym = synonym_extractor(user_image)
+   
+   # zara image
+   zara_txt = filter_out_stop_words(zara_description)
+
+   score = 0
+   for word in zara_txt:
+      for terms in user_synonym:
+         if user_synonym[terms] in zara_txt:
+            score += 1
+
+   return score // 15
 
 import requests
 import json
@@ -88,7 +102,8 @@ def astica_description(path:str):
                 return long_caption
 
 
-def filter_out_stop_words(path)-> list:
+def filter_out_all(path)-> list:
+    # FOR ASTICA DESCRIPTION 
     stop_words = set(stopwords.words('english'))
     user_description = astica_description(path)
     print(astica_description(path))
@@ -111,6 +126,20 @@ def filter_out_stop_words(path)-> list:
     adjectives = [w for w, t in tags if t == 'JJ']
     return adjectives + clothes_in_description
 
+def filter_out_stop_words(path)-> list:
+    # JUST FOR THE ZARA DESCRIPTION
+    stop_words = set(stopwords.words('english'))
+    user_description = astica_description(path)
+    print(astica_description(path))
+    word_tokens = word_tokenize(user_description)
+
+    filtered_sentence = [w for w in word_tokens if not w.lower() in stop_words]
+    filtered_sentence = []
+
+    for w in word_tokens:
+        if w not in stop_words:
+            filtered_sentence.append(w)
+
 
 def synonym_extractor(phrase):
     from nltk.corpus import wordnet
@@ -128,7 +157,7 @@ def synonym_extractor(phrase):
     return word_dict
 
 
-fiter = filter_out_stop_words('blazer.png')
+fiter = filter_out_all('blazer.png')
 print(fiter)
 s = synonym_extractor(fiter)
 print(s)
