@@ -108,7 +108,7 @@ class WeightedGraph:
 
 
 def load_clothing_items(clothing_items_file: str) -> WeightedGraph:
-    """Create a weighted graph containing each clothing item from the file as vertices."""
+    """Create a weighted graph containing each clothing item from the file as vertices and add edges between them based on similarity."""
 
     g = WeightedGraph()
 
@@ -124,6 +124,7 @@ def load_clothing_items(clothing_items_file: str) -> WeightedGraph:
             urls = str_to_list(line[7])
             g.add_vertex(line[2], line[3], line[4], float(line[5]), urls)
 
+    create_edges(g)
     return g
 
 
