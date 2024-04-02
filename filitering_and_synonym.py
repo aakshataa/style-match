@@ -16,7 +16,7 @@ def get_image_base64_encoding(image_path: str) -> str:
     return f"data:image/{image_extension[1:]};base64,{base64_encoded}"
 
 
-def asticaAPI(endpoint, payload, timeout):
+def asticaAPI(endpoint:str, payload:Any, timeout:float) -> dict:
     """ The function sends a POST request to the specified endpoint, including the provided payload, with a specified timeout. 
     It expects a response with a status code of 200 (meaning success). If the response status code is 200, it returns the response
     data in JSON format. If the response status code is not 200, it returns a JSON object indicating an error occurred - Given by our ASTICA API"""
@@ -28,8 +28,13 @@ def asticaAPI(endpoint, payload, timeout):
         return {'status': 'error', 'error': 'Failed to connect to the API.'}
 
 
-def astica_description(filelocation: str):
-    """ Given an image, our ASTICA API uses computer visison to create a description of it. The code was originally given by our ASTICA API but we modified it"""
+def astica_description(filelocation: str) -> str:
+    """ Given an image, our ASTICA API uses computer visison to create a description of it. The code was originally given by our ASTICA API but we modified it
+
+    Preconditions:
+    - filelocation should be a valid path linking to users directory
+    
+    """
     # API configurations
     asticaAPI_key = '0F432E35-599B-4DC3-AEB7-A6FF2B4E96A0274078E18C7F0C-3476-405E-92BB-0A2FC41C441B' # We had to get this key off of ASTICA - these keys are used identify and authenticate an app/user. 
     asticaAPI_timeout = 25  # in seconds. "gpt" or "gpt_detailed" require increased timeouts
@@ -64,5 +69,9 @@ def astica_description(filelocation: str):
                 return long_caption
 
 def user_image_description(filelocation: str) -> str:
-   """ Returns our ASTICA description when given the file path from our directory"""
+   """ Returns our ASTICA description when given the file path from our directory
+   
+   Preconditions:
+    - filelocation should be a valid path linking to users directory
+   """
     return astica_description(filelocation)
