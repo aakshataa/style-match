@@ -9,55 +9,44 @@ from PIL import ImageTk, Image
 import urllib.request
 import io
 
+from urllib.request import urlopen
+import webbrowser
 
-class WebImage:
-    def __init__(self, url):
-        with urllib.request.urlopen(url) as u:
-            raw_data = u.read()
-        #self.image = tk.PhotoImage(data=base64.encodebytes(raw_data))
-        image = Image.open(io.BytesIO(raw_data))
-        self.image = ImageTk.PhotoImage(image)
-
-    def get(self):
-        return self.image
+#
+# def display_imgs(imgs: list) -> None:
+#     """"""
+#     for img in imgs:
+#         imagelab = Label(window, image=img)
+#         imagelab.pack()
 
 
-def display_imgs(imgs: list) -> None:
-    """"""
-    for img in imgs:
-        imagelab = Label(window, image=img)
-        imagelab.pack()
+def find_similar(description: str) -> list:
+    """Find similar clothing items based on description and return the top 5 most similar as a
+    list of Weighted Vertices."""
+    global items  #TODO
 
-
-def start_program(filelocation: str) -> None:
-    """Runs program."""
     graph = g.load_clothing_items("data/store_zara_small_women.csv")
-    desc = f.user_image_description(filelocation)
-    print(desc)
-    user_vertex = graph.create_clothing_item(desc)
+    user_vertex = graph.create_clothing_item(description)
 
     for vertex in graph.vertices:
         g.create_edge(graph, user_vertex.item_id, graph.vertices[vertex].item_id)
 
     top_items = user_vertex.get_ordered_neighbours()[:5]
-    imgs = []
-    for x in top_items:
-        print(x.urls[0])
-        imgs.append(WebImage(x.urls[0]).get())
-
-        display_imgs(imgs)
-
 
     print([x.urls[0] for x in top_items])
+    print([x.item_name for x in top_items])
+
+    items = top_items
+    return top_items
 
 
-# video we used to learn tkinter: https://www.youtube.com/watch?v=TuLxsvK4svQ&t=455s
-
-window = Tk()  # instantiate an instance of a window
-
-window.geometry("800x800")
-window.title("StyleMatch")
-window.configure(bg='#e1e5e6')
+def start_program(filelocation: str) -> list:
+    """Runs program."""
+    global items   #TODO
+    desc = f.user_image_description(filelocation)
+    print(desc)
+    items = find_similar(desc)
+    update_labels()
 
 
 def play_select_file():
@@ -87,6 +76,8 @@ def browse():
     """
     source: https://dev.to/jairajsahgal/creating-a-file-uploader-in-python-18e0
     """
+    global items  # TODO: tempo
+
     time.sleep(0.1)
     filelocation = askopenfilename()
     try:
@@ -109,11 +100,78 @@ def browse():
 
             start_program(filelocation)
 
+
     except FileNotFoundError:
         error.pack()
 
+def update_labels() -> None:
+    """
 
+    """
+    global items        # TODO
+    global website_buttons
+    global find_buttons
+    global images
+
+    for i in website_buttons:
+
+        website_buttons[i].configure(text="smth" + str(i), command=lambda: open_website(items[i].website))
+        open_website(items[i].website)
+        print(items[i].website)
+
+    for i in range(len(find_buttons)):
+        find_buttons[i].config(command=lambda: find_similar(items[i].item_description))
+
+    for i in range(len(find_buttons)):
+        print(items[i].urls[1])
+        data = urlopen(items[i].urls[1][1:])
+        image = ImageTk.PhotoImage(data=data.read())
+        image_width = image.width() // 10
+        image_height = image.height() // 10
+        image = ImageTk.getimage(image)
+        image = image.resize((image_width, image_height))
+        image = ImageTk.PhotoImage(image)
+
+        label = images[i]
+        label.config(image=image)
+        label.image = image
+
+
+def open_website(url: str):
+    """
+    take in website url and open it for the user
+    """
+    webbrowser.open_new_tab(url)
+
+
+# if __name__ == "__main__":
 # components/widgets
+# video we used to learn tkinter: https://www.youtube.com/watch?v=TuLxsvK4svQ&t=455s
+
+window = Tk()  # instantiate an instance of a window
+
+window.geometry("800x800")
+window.title("StyleMatch")
+window.configure(bg='#e1e5e6')
+
+items = []
+website_buttons = {}
+find_buttons = []
+images = {}
+
+frame1 = Frame(window)
+
+for i in range(2):
+    images[i] = Label(frame1, text="image"+str(i))
+    website_buttons[i] = Button(frame1, text="button" + str(i))
+    find_buttons.append(Button(frame1, text="find similar" + str(i)))
+    images[i].pack(side=LEFT)
+    website_buttons[i].pack(side=RIGHT)
+    find_buttons[i].pack(side=LEFT)
+
+frame1.pack()
+
+
 title = Label(window,
               text="StyleMatch",
               fg="#293366",

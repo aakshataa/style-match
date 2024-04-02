@@ -28,8 +28,9 @@ class WeightedVertex:
     price: float
     urls: list[str]
     neighbours: dict[WeightedVertex, float]
+    website: str
 
-    def __init__(self, item_id: str, item_name: str, item_description: str, price: float, urls: list[str]) -> None:
+    def __init__(self, item_id: str, item_name: str, item_description: str, price: float, urls: list[str], website: str) -> None:
         """Initialize a new vertex with the given item."""
         self.item_id = item_id
         self.item_name = item_name
@@ -37,6 +38,7 @@ class WeightedVertex:
         self.price = price
         self.urls = urls
         self.neighbours = {}
+        self.website = website
 
     def get_ordered_neighbours(self) -> list[WeightedVertex]:
         """Returns a list of the neighbours ordered by decreasing weights"""
@@ -58,14 +60,14 @@ class WeightedGraph:
         """Initialize an empty graph (no vertices or edges)."""
         self.vertices = {}
 
-    def add_vertex(self, item_id: str, item_name: str, item_description: str, price: float, urls: list[str]) -> None:
+    def add_vertex(self, item_id: str, item_name: str, item_description: str, price: float, urls: list[str], website: str) -> None:
         """
         Add a vertex with the given parameters to this graph.
         The new vertex is not adjacent to any other vertices.
         Do nothing if the given item is already in this graph.
         """
         if item_id not in self.vertices:
-            self.vertices[item_id] = WeightedVertex(item_id, item_name, item_description, price, urls)
+            self.vertices[item_id] = WeightedVertex(item_id, item_name, item_description, price, urls, website)
 
     def add_edge(self, item_id1: Any, item_id2: Any, weight: float = 1) -> None:
         """Add an edge between the two vertices with the given item_ids in this graph,
@@ -97,7 +99,7 @@ class WeightedGraph:
         and return its item_id"""
 
         item_id = str(uuid.uuid4())  # generate random id
-        v = WeightedVertex(item_id, "", item_description, 0, [])
+        v = WeightedVertex(item_id, "", item_description, 0, [], '')
         self.vertices[item_id] = v
 
         for other_id in self.vertices:
@@ -121,7 +123,7 @@ def load_clothing_items(clothing_items_file: str) -> WeightedGraph:
 
             # create vertex for each clothing item
             urls = str_to_list(line[7])
-            g.add_vertex(line[2], line[3], line[4], float(line[5]), urls)
+            g.add_vertex(line[2], line[3], line[4], float(line[5]), urls, line[1])
 
     return g
 
@@ -166,7 +168,7 @@ def get_similarity_score(user_desc: str, item_desc: str) -> float:
     Then item_desc is generated """
 
     user_keywords = filter_out_user(user_desc)
-    user_kw_synonyms = synonym_extractor(" ".join(user_keywords))
+    # user_kw_synonyms = synonym_extractor(" ".join(user_keywords))
 
     # zara image
     zara_txt = filter_out_data(item_desc)
@@ -248,7 +250,7 @@ def filter_out_data(item_desc: str) -> list:
     """Filtering out 'stopwords' for the given zara clothing item
     - aka words that are not important to the clothing item's description
     """
-    stop_words = set(stopwords.words('english'))
+    # stop_words = set(stopwords.words('english'))
 
     # JUST FOR THE ZARA DESCRIPTION
     stop_words = set(stopwords.words('english'))
