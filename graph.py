@@ -17,8 +17,7 @@ from nltk.corpus import wordnet
 colours = ['black', 'white', 'gold', 'silver', 'blue', 'red', 'orange', 'yellow', 'green', 'purple', 'pink',
            'brown', 'tan', 'beige']
 clothes = ['shirt', 'short', 'skirt', 'dress', 'jacket', 'pants', 'leggings', 'jeans', 'top', 'bottom', 'sweater',
-           'crop top', 'vest']
-stop_words = set(stopwords.words('english'))
+           'crop top', 'vest', 'underwear']
 
 
 class WeightedVertex:
@@ -108,7 +107,7 @@ class WeightedGraph:
 
 
 def load_clothing_items(clothing_items_file: str) -> WeightedGraph:
-    """Create a weighted graph containing each clothing item from the file as vertices and add edges between them based on similarity."""
+    """Create a weighted graph containing each clothing item from the file as vertices."""
 
     g = WeightedGraph()
 
@@ -124,7 +123,6 @@ def load_clothing_items(clothing_items_file: str) -> WeightedGraph:
             urls = str_to_list(line[7])
             g.add_vertex(line[2], line[3], line[4], float(line[5]), urls)
 
-    create_edges(g)
     return g
 
 
@@ -149,8 +147,14 @@ def create_edge(g: WeightedGraph, id1: str, id2: str) -> None:
     v1 = g.vertices[id1]
     v2 = g.vertices[id2]
 
+    if v1.item_name == '':
+        score = get_similarity_score(v1.item_description, v2.item_description + v2.item_name)
+    elif v2.item_name == '':
+        score = get_similarity_score(v1.item_description + v1.item_name, v2.item_description)
+    else:
+        score = get_similarity_score(v1.item_description, v2.item_description)
+
     # get similarity score between two vertices
-    score = get_similarity_score(v1.item_description, v2.item_description)
 
     g.add_edge(v1.item_id, v2.item_id, score)
 
@@ -162,7 +166,7 @@ def get_similarity_score(user_desc: str, item_desc: str) -> float:
     Then item_desc is generated """
 
     user_keywords = filter_out_user(user_desc)
-    user_kw_synonyms = synonym_extractor(str(user_keywords))
+    user_kw_synonyms = synonym_extractor(" ".join(user_keywords))
 
     # zara image
     zara_txt = filter_out_data(item_desc)
@@ -170,14 +174,19 @@ def get_similarity_score(user_desc: str, item_desc: str) -> float:
     score = 0
 
     for word in zara_txt:
-        if word in list(user_kw_synonyms.values()):
+        if str.lower(word) in user_desc:
             if word in colours:
                 score += 1
+                print('yay')
             if word in clothes:
+                print('woo')
                 score += 1
             score += 1
 
-    return score / 15
+    if len(zara_txt) > 0:
+        return score / len(zara_txt)
+    else:
+        return 0
 
 
 def str_to_list(text: str) -> list[str]:
@@ -190,38 +199,25 @@ def str_to_list(text: str) -> list[str]:
     return lst
 
 
-if __name__ == '__main__':
-
-    # create the graph using a dataset
-    graph = load_clothing_items("data/store_zara_small_women.csv")
-    # create_edges(graph)
-
-    # add a new clothing item to the graph
-    item_description = "This is a black dress."
-    new_id = graph.create_clothing_item(item_description)
-
-    # get list of similar clothing items ordered by decreasing similarity
-    similar_items = graph.get_neighbours(new_id)
-    print([i.item_name for i in similar_items])
-
-
-def synonym_extractor(phrase: str) -> dict[str, str]:
+def synonym_extractor(phrase: str) -> list[str]:
     """Returns a dictionary of synoymns.
     Maps keyword to its given synonyms
     Utilizes nltk library. """
 
-    word_dict = {}
+    word_lst = []
 
     for word in phrase:
+        word_lst.append(word)
         if word in ['black', 'white', 'blue', 'pink', 'purple', 'yellow', 'red', 'orange', 'green', 'gold', 'silver']:
-            word_dict.update({word: word})
+            word_lst.append(word)
             continue
         s = []
         for syn in wordnet.synsets(word):
             for lem in syn.lemmas():
                 s.append(lem.name())
-        word_dict.update({word: set(s)})
-    return word_dict
+        word_lst.extend(s)
+
+    return word_lst
 
 
 def filter_out_user(user_description: str) -> list:
@@ -230,6 +226,7 @@ def filter_out_user(user_description: str) -> list:
     """
 
     word_tokens = word_tokenize(user_description)
+    stop_words = set(stopwords.words('english'))
 
     filtered_sentence = []
 
@@ -251,6 +248,7 @@ def filter_out_data(item_desc: str) -> list:
     """Filtering out 'stopwords' for the given zara clothing item
     - aka words that are not important to the clothing item's description
     """
+    stop_words = set(stopwords.words('english'))
 
     # JUST FOR THE ZARA DESCRIPTION
     stop_words = set(stopwords.words('english'))

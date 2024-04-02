@@ -1,19 +1,60 @@
 from tkinter import *
-import requests
 from tkinter.filedialog import askopenfilename
-import json
-import pandas as pd
 import time
-from tkinter import Tk, font
+from tkinter import Tk
 from tkinter import Label
 import filitering_and_synonym as f
-from PIL import Image, ImageTk
 import graph as g
+from PIL import ImageTk, Image
+import urllib.request
+import io
+
+
+class WebImage:
+    def __init__(self, url):
+        with urllib.request.urlopen(url) as u:
+            raw_data = u.read()
+        #self.image = tk.PhotoImage(data=base64.encodebytes(raw_data))
+        image = Image.open(io.BytesIO(raw_data))
+        self.image = ImageTk.PhotoImage(image)
+
+    def get(self):
+        return self.image
+
+
+def display_imgs(imgs: list) -> None:
+    """"""
+    for img in imgs:
+        imagelab = Label(window, image=img)
+        imagelab.pack()
+
+
+def start_program(filelocation: str) -> None:
+    """Runs program."""
+    graph = g.load_clothing_items("data/store_zara_small_women.csv")
+    desc = f.user_image_description(filelocation)
+    print(desc)
+    user_vertex = graph.create_clothing_item(desc)
+
+    for vertex in graph.vertices:
+        g.create_edge(graph, user_vertex.item_id, graph.vertices[vertex].item_id)
+
+    top_items = user_vertex.get_ordered_neighbours()[:5]
+    imgs = []
+    for x in top_items:
+        print(x.urls[0])
+        imgs.append(WebImage(x.urls[0]).get())
+
+        display_imgs(imgs)
+
+
+    print([x.urls[0] for x in top_items])
 
 
 # video we used to learn tkinter: https://www.youtube.com/watch?v=TuLxsvK4svQ&t=455s
 
 window = Tk()  # instantiate an instance of a window
+
 window.geometry("800x800")
 window.title("StyleMatch")
 window.configure(bg='#e1e5e6')
@@ -26,12 +67,11 @@ def play_select_file():
 
 
 def display_instructions():
-
     """Generates label that displays isntructions"""
     f = Frame(window, bg="#293366", width=30, height=30)
     f.pack()
     instruction = Label(f,
-                        text="Welcome to StyleMatch! Upload a file of a clothing item "
+                        text="Welcome to StyleMatch! Upload a file of a clothing item\n"
                              "you want to find a similar item for. ",
                         fg="#bf4343",
                         font=('Avenir Next', 20),
@@ -53,20 +93,21 @@ def browse():
         with open(filelocation) as fl:
             file_name = filelocation.split("/")[-1]
             print(filelocation)
-            files = {
+            """files = {
                 'file': (file_name, open(filelocation, 'rb')),
             }
             response = requests.post('https://file.io/', files=files)
 
-            data = json.loads(response.text)
+            data = json.loads(response.text)"""
 
-            if data["success"]:
+            """if data["success"]:
                 print("One use hyperlink with your file -> ", data["link"], " copied to your clipboard")
                 print(filelocation)
                 # img.save(file_name.split(".")[0] + ".png")
                 df = pd.DataFrame([data["link"]])
-                df.to_clipboard(index=False, header=False)
-                start_program(filelocation)
+                df.to_clipboard(index=False, header=False)"""
+
+            start_program(filelocation)
 
     except FileNotFoundError:
         error.pack()
@@ -127,8 +168,6 @@ error = Label(window,
               padx=20,
               pady=40)
 
-
-
 """save_button = Button(window,
                 text="Upload",
                 command=click,
@@ -138,16 +177,3 @@ error = Label(window,
                 )"""
 
 window.mainloop()  # place window on computer screen, listen for events
-
-
-def start_program(filelocation: str):
-    """Runs program."""
-    graph = g.load_clothing_items("data/store_zara_small_women.csv")
-    desc = f.user_image_description(filelocation)
-    user_vertex = graph.create_clothing_item(desc)
-
-    for vertex in graph.vertices:
-        g.create_edge(graph, user_vertex.item_id, graph.vertices[vertex].item_id)
-
-    top_items = user_vertex.get_ordered_neighbours()[:5]
-    [print(x.item_description) for x in top_items]

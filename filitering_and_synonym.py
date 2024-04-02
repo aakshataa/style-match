@@ -27,11 +27,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 
-
-
-
-
-nltk.download('averaged_perceptron_tagger')
+# nltk.download('averaged_perceptron_tagger')
 
 
 def get_image_base64_encoding(image_path: str) -> str:
@@ -68,8 +64,8 @@ def astica_description(filelocation: str):
     asticaAPI_input = get_image_base64_encoding(filelocation)  # use base64 image input (slower)
 
     asticaAPI_visionParams = 'gpt_detailed,describe,color,categories'  # comma separated, defaults to "all".
-    asticaAPI_gpt_prompt = ' write a detailed description of the clothing item'  # only used if visionParams includes "gpt" or "gpt_detailed"
-    asticaAPI_prompt_length = '15'  # number of words in GPT response
+    asticaAPI_gpt_prompt = 'write a detailed description of the clothing item including fabric, style, color, and cut. Do not mention background and person'  # only used if visionParams includes "gpt" or "gpt_detailed"
+    asticaAPI_prompt_length = '25'  # number of words in GPT response
 
     # Define payload dictionary
     asticaAPI_payload = {
