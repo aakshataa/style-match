@@ -1,91 +1,184 @@
+
+import random
 from tkinter import *
-from tkinter.tix import Balloon
+from tkinter import Tk, Label, filedialog
+from tkinter.ttk import Progressbar
 
-import requests
-from tkinter import filedialog
-from tkinter import Tk
-from tkinter.filedialog import askopenfilename
-import json
-import pandas as pd
-import time
-from tkinter import Tk, font
+import filitering_and_synonym as f
+import graph as g
+from PIL import ImageTk
+import urllib.request
+import webbrowser
 
-import tkinter as tk
-from tkinter import Label
-from tkinter import filedialog
-
-# source: https://dev.to/jairajsahgal/creating-a-file-uploader-in-python-18e0
-# source: https://www.youtube.com/watch?v=TuLxsvK4svQ&t=455s
-
-# widgets = GUI elements: buttons, textboxes, labels, images
-# windows = serves as a container to hold these widgets
-
-window = Tk()  # instantiate an instance of a window
-window.geometry("800x800")
-window.title("StyleMatch")
-window.configure(bg='#e1e5e6')
-label = Label(window,
-              text="StyleMatch",
-              fg="#293366",
-              font=('Avenir Next', 80, 'bold'),
-              anchor='center',
-              justify='center',
-              bg='white',
-              padx=20,
-              pady=20)
-
-label.pack(padx=50, pady=60)
-
-select_file = Label(window,
-                    text="Please select your file. Must be type .jpg, .jpeg, or .png",
-                    fg="#293366",
-                    font=('Avenir Next Thin', 20),
-                    anchor='center',
-                    justify='center',
-                    padx=20,
-                    pady=60)
-
-def play_select_file():
-    select_file.pack()
-    time.sleep(0.1)
-    browse()
-def browse():
-
-    time.sleep(0.1)
-    filelocation = askopenfilename()
-    file_name = filelocation.split("/")[-1]
-    print(filelocation)
-
-    files = {
-        'file': (file_name, open(filelocation, 'rb')),
-    }
-    response = requests.post('https://file.io/', files=files)
-
-    data = json.loads(response.text)
-
-    if data["success"]:
-        print("One use hyperlink with your file -> ", data["link"], " copied to your clipboard")
-        print(filelocation)
-        # img.save(file_name.split(".")[0] + ".png")
-        df = pd.DataFrame([data["link"]])
-        df.to_clipboard(index=False, header=False)
+# TODO:  invalid url
 
 
-browse_button = Button(window,
-                       text="Browse Image",
-                       command=play_select_file,
-                       font=("Avenir Next", 30),
-                       fg="#293366"
-                       )
+class StyleMatch:
+    """ Our main class which is running the entire application."""
+    graph: g.WeightedGraph
+    window: Tk
+    items: list[g.WeightedVertex]
+    dataset: str
 
-browse_button.pack()
+    labels: dict[int, list]
+
+    def __init__(self, dataset: str):
+        """Initialize variables, create/display a window, and start application."""
+        self.graph = g.load_clothing_items(dataset)
+        self.dataset = dataset
+
+        # initialize items to be a list of 5 random vertices
+        self.items = random.sample(list(self.graph.vertices.values()), 5)
+
+        # create window and widgets
+        self.window = Tk()
+        self.window.geometry("1000x700")
+        self.window.title("Style Match")
+
+        # create title widgets
+        title_frame = Frame(self.window, pady=20)
+
+        title_label = Label(title_frame, text="Style Match", font=("Arial", 40, "bold"))
+        title_label.pack(side=TOP)
+
+        instructions = Label(title_frame, text="Select an Image to Find Similar Style Clothes or Search for Keywords.")
+        instructions.pack(side=TOP)
+
+        browse_button = Button(title_frame, text="Choose Image", command=self.browse)
+        browse_button.pack(side=TOP)
+
+        search_frame = Frame(title_frame)
+        search_bar = Entry(search_frame)
+        search_bar.pack(side=LEFT)
+        submit_button = Button(search_frame, text="Search", command=lambda: self.find_similar_from_desc(search_bar.get()))
+        submit_button.pack(side=RIGHT)
+        search_frame.pack(side=TOP)
+
+        title_frame.pack(side=TOP)
+
+        # create widgets to display clothing items
+        image_display_frame = Frame(self.window, pady=20)
+        self.labels = {}
+        for i in range(5):
+            frame = Frame(image_display_frame, pady=20)
+
+            image_label = Label(frame, text="Image")
+            image_label.pack(side=TOP)
+
+            name_label = Label(frame, text=self.items[i].item_name, wraplength=200)
+            name_label.pack(side=TOP)
+
+            web_button = Button(frame, text="website", command=lambda url=self.items[i].website: self.open_url(url))
+            web_button.pack(side=TOP)
+
+            sim_button = Button(frame, text="find similar",
+                                command=lambda desc=self.items[i].item_description: self.find_similar_from_desc(desc))
+            sim_button.pack(side=TOP)
+
+            frame.pack(side=LEFT)
+            self.labels[i] = [image_label, name_label, web_button, sim_button]
+
+        image_display_frame.pack(side=TOP)
+
+        self.update_labels()
+        self.window.mainloop()
+
+    def browse(self) -> None:
+        """Try to get the file path of the selected file and find the similar images of the selected file
+        if successful. Otherwise, do nothing."""
+        try:
+            file_path = filedialog.askopenfilename(filetypes=(('JPG Image', '.jpg'),
+                                                              ('PNG Image', '.png'),
+                                                              ('All Image Files', '.jpg .png')))
+        except FileNotFoundError:
+            pass
+        else:
+            self.find_similar_from_image(file_path)
+
+    def open_url(self, url: str) -> None:
+        """Opens the given url in a new tab in the default browser."""
+        webbrowser.open_new_tab(url)
+
+    def find_similar_from_desc(self, item_description: str) -> None:
+        """Update items to be a list of the clothing items most similar to the given item_description
+        as Weighted Vertices."""
 
 
-"""save_button = Button(window,
-                text="Upload",
-                command=click,
-                font=("Arial", 30),
-                fg= "#293366",
-                width=50
-                )"""
-window.mainloop()  # place window on computer screen, listen for events
+        # create graph and new vertex
+        self.graph = g.load_clothing_items(self.dataset)
+        user_vertex = self.graph.create_clothing_item(item_description)
+
+        # create edges
+        for vertex in self.graph.vertices:
+            g.create_edge(self.graph, user_vertex.item_id, self.graph.vertices[vertex].item_id)
+
+        # get top 5 similar items and update items
+        self.items = user_vertex.get_ordered_neighbours()[:5]
+
+        print([x.urls[0] for x in self.items])
+        print([x.item_name for x in self.items])
+        self.update_labels()
+
+    def find_similar_from_image(self, file_location: str) -> None:
+        """Update items to be a list of the clothing items most similar to the photo with the given file_location
+        as Weighted Vertices."""
+
+        photo_description = f.user_image_description(file_location)
+        self.find_similar_from_desc(photo_description)
+
+    def update_labels(self):
+        """Update labels in window based on current clothing items in items list."""
+
+        for i in range(len(self.items)):
+
+            # update image
+            image = self.image_from_url(self.items[i].urls[1][1:])
+            self.labels[i][0].config(image=image)
+            self.labels[i][0].image = image
+
+            # update name
+            self.labels[i][1].config(text=self.items[i].item_name)
+
+            # update website url
+            self.labels[i][2].config(command=lambda url=self.items[i].website: self.open_url(url))
+
+            # update find similar button
+            self.labels[i][3].config(command=
+                                     lambda desc=self.items[i].item_description: self.find_similar_from_desc(desc))
+
+    def image_from_url(self, url: str) -> PhotoImage:
+        """Return the photo with the given url as a PhotoImage."""
+
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        data = urllib.request.urlopen(req).read()
+
+        image = ImageTk.PhotoImage(data=data)
+        return self.resize_image(image, 200, 200)
+
+    def resize_image(self, image: PhotoImage, max_height: int, max_width: int) -> PhotoImage:
+        """Resizes the given image while maintaining aspect ratio and making sure the height and width
+        do not exceed the max height and width. A PhotoImage is returned."""
+
+        # convert to PhotoImage to Image
+        image = ImageTk.getimage(image)
+
+        # calculate new dimensions
+        aspect_ratio = image.width / image.height
+
+        if aspect_ratio > 1:  # wider
+            new_width = max_width
+            new_height = new_width / aspect_ratio
+        else:
+            new_height = max_height
+            new_width = max_height * aspect_ratio
+
+        # resize
+        image = image.resize((int(new_width), int(new_height)))
+
+        # convert Image to PhotoImage and return
+        return ImageTk.PhotoImage(image)
+
+
+if __name__ == "__main__":
+    # initialize application
+    app = StyleMatch("data/store_zara_small_women.csv")
