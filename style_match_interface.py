@@ -5,12 +5,11 @@
 import random
 from tkinter import *
 from tkinter import Tk, Label, filedialog
-from tkinter.ttk import Progressbar
-
 import filitering_and_synonym as f
 import graph as g
 from PIL import ImageTk
 import urllib.request
+import urllib.error
 import webbrowser
 
 # TODO:  invalid url
@@ -44,7 +43,8 @@ class StyleMatch:
         title_label = Label(title_frame, text="Style Match", font=("Arial", 40, "bold"))
         title_label.pack(side=TOP)
 
-        instructions = Label(title_frame, text="Select an Image to Find Similar Style Clothes or Search for Keywords.")
+        instructions = Label(title_frame, text="Select an Image to Find Similar Style Clothes or Search for Keywords."
+                                               "\nClick on an Image to View Details About the Item.")
         instructions.pack(side=TOP)
 
         browse_button = Button(title_frame, text="Choose Image", command=self.browse)
@@ -53,7 +53,8 @@ class StyleMatch:
         search_frame = Frame(title_frame)
         search_bar = Entry(search_frame)
         search_bar.pack(side=LEFT)
-        submit_button = Button(search_frame, text="Search", command=lambda: self.find_similar_from_desc(search_bar.get()))
+        submit_button = Button(search_frame, text="Search",
+                               command=lambda: self.find_similar_from_desc(search_bar.get()))
         submit_button.pack(side=RIGHT)
         search_frame.pack(side=TOP)
 
@@ -65,26 +66,51 @@ class StyleMatch:
         for i in range(5):
             frame = Frame(image_display_frame, pady=20)
 
-            image_label = Label(frame, text="Image")
+            image_label = Button(frame, text="Missing Image", padx=10, pady=20, height=240, width=200, borderwidth=0,
+                                 activebackground="#D3D3D3",
+                                 command=lambda x=self.items[i]: self.display_item_popup(x))
             image_label.pack(side=TOP)
 
-            name_label = Label(frame, text=self.items[i].item_name, wraplength=200)
+            name_label = Label(frame, wraplength=200)
             name_label.pack(side=TOP)
 
-            web_button = Button(frame, text="website", command=lambda url=self.items[i].website: self.open_url(url))
+            web_button = Button(frame, text="website")
             web_button.pack(side=TOP)
 
-            sim_button = Button(frame, text="find similar",
-                                command=lambda desc=self.items[i].item_description: self.find_similar_from_desc(desc))
+            sim_button = Button(frame, text="find similar")
             sim_button.pack(side=TOP)
 
             frame.pack(side=LEFT)
             self.labels[i] = [image_label, name_label, web_button, sim_button]
 
         image_display_frame.pack(side=TOP)
-
         self.update_labels()
         self.window.mainloop()
+
+    def display_item_popup(self, item: g.WeightedVertex) -> None:
+        """Create a popup window displaying the info for the given weighted vertex cloting item."""
+        popup = Toplevel()
+
+        name_label = Label(popup, text=item.item_name, font=('Arial', 15, 'bold'))
+        price_label = Label(popup, text="$" + str(item.price) + " (USD)")
+        desc_label = Label(popup, text=item.item_description)
+        image_frame = Frame(popup)
+        row_frame = Frame(image_frame)
+        for i in range(len(item.urls)):
+            if i % 5 == 0 and i != 0:
+                row_frame.pack(side=TOP)
+                row_frame = Frame(image_frame)
+            image = self.image_from_url(item.urls[i])
+            if image:
+                image_label = Label(row_frame, image=image)
+                image_label.image = image
+                image_label.pack(side=LEFT)
+        row_frame.pack(side=TOP)
+
+        name_label.pack(side=TOP)
+        price_label.pack(side=TOP)
+        desc_label.pack(side=TOP)
+        image_frame.pack(side=TOP)
 
     def browse(self) -> None:
         """Try to get the file path of the selected file and find the similar images of the selected file
@@ -105,7 +131,6 @@ class StyleMatch:
     def find_similar_from_desc(self, item_description: str) -> None:
         """Update items to be a list of the clothing items most similar to the given item_description
         as Weighted Vertices."""
-
 
         # create graph and new vertex
         self.graph = g.load_clothing_items(self.dataset)
@@ -135,7 +160,7 @@ class StyleMatch:
         for i in range(len(self.items)):
 
             # update image
-            image = self.image_from_url(self.items[i].urls[1][1:])
+            image = self.image_from_url(self.items[i].urls[1])
             self.labels[i][0].config(image=image)
             self.labels[i][0].image = image
 
@@ -149,14 +174,17 @@ class StyleMatch:
             self.labels[i][3].config(command=
                                      lambda desc=self.items[i].item_description: self.find_similar_from_desc(desc))
 
-    def image_from_url(self, url: str) -> PhotoImage:
-        """Return the photo with the given url as a PhotoImage."""
+    def image_from_url(self, url: str) -> PhotoImage | None:
+        """Return the photo with the given url as a resized PhotoImage."""
 
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        data = urllib.request.urlopen(req).read()
-
-        image = ImageTk.PhotoImage(data=data)
-        return self.resize_image(image, 200, 200)
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            data = urllib.request.urlopen(req).read()
+            image = ImageTk.PhotoImage(data=data)
+        except (ValueError, urllib.error.URLError) as _:
+            return None
+        else:
+            return self.resize_image(image, 200, 200)
 
     def resize_image(self, image: PhotoImage, max_height: int, max_width: int) -> PhotoImage:
         """Resizes the given image while maintaining aspect ratio and making sure the height and width

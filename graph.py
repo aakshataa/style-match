@@ -192,7 +192,7 @@ def get_similarity_score(user_desc: str, item_desc: str) -> float:
 def str_to_list(text: str) -> list[str]:
     """Takes in a string representation of a list of strings and converts them into a list of strings."""
 
-    lst = text[1:-1].split(",")         # remove brackets and split by comma
+    lst = text[1:-1].split(", ")         # remove brackets and split by comma
     for i in range(len(lst)):
         lst[i] = lst[i][1:-1]           # remove quotations
 
