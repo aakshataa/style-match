@@ -17,7 +17,7 @@ from nltk.corpus import wordnet
 colours = ['black', 'white', 'gold', 'silver', 'blue', 'red', 'orange', 'yellow', 'green', 'purple', 'pink',
            'brown', 'tan', 'beige']
 clothes = ['shirt', 'short', 'skirt', 'dress', 'jacket', 'pants', 'leggings', 'jeans', 'top', 'bottom', 'sweater',
-           'crop top', 'vest', 'underwear']
+           'crop top', 'vest', 'underwear', 'shorts', 'sneakers']
 
 
 class WeightedVertex:
@@ -178,12 +178,10 @@ def get_similarity_score(user_desc: str, item_desc: str) -> float:
     for word in zara_txt:
         if str.lower(word) in user_desc:
             if word in colours:
-                score += 1
-                print('yay')
+                score += 500
             if word in clothes:
-                print('woo')
-                score += 1
-            score += 1
+                score += 1000
+            score += 100
 
     if len(zara_txt) > 0:
         return score / len(zara_txt)
