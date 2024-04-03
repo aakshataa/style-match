@@ -119,6 +119,9 @@ class StyleMatch:
         except FileNotFoundError:
             pass
         else:
+            # check if file path is valid
+            if file_path == "":
+                return
             self.find_similar_from_image(file_path)
 
     def open_url(self, url: str) -> None:
