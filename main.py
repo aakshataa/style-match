@@ -19,7 +19,7 @@ class StyleMatch:
     items: list[g.WeightedVertex]
     dataset: str
 
-    labels: dict[int, list]
+    widgets: dict[int, list]
 
     def __init__(self, dataset: str) -> None:
         """Initialize variables, create/display a window, and start application."""
@@ -59,7 +59,7 @@ class StyleMatch:
 
         # create widgets to display clothing items
         image_display_frame = Frame(self.window, pady=20)
-        self.labels = {}
+        self.widgets = {}
         for i in range(5):
             frame = Frame(image_display_frame, pady=20)
 
@@ -78,7 +78,7 @@ class StyleMatch:
             sim_button.pack(side=TOP)
 
             frame.pack(side=LEFT)
-            self.labels[i] = [image_label, name_label, web_button, sim_button]
+            self.widgets[i] = [image_label, name_label, web_button, sim_button]
 
         image_display_frame.pack(side=TOP)
         self.update_labels()
@@ -153,22 +153,21 @@ class StyleMatch:
 
     def update_labels(self) -> None:
         """Update labels in window based on current clothing items in items list."""
-
         for i in range(len(self.items)):
 
             # update image
             image = self.image_from_url(self.items[i].urls[1])
-            self.labels[i][0].config(image=image)
-            self.labels[i][0].image = image
+            self.widgets[i][0].config(image=image, command=lambda x=self.items[i]: self.display_item_popup(x))
+            self.widgets[i][0].image = image
 
             # update name
-            self.labels[i][1].config(text=self.items[i].item_name)
+            self.widgets[i][1].config(text=self.items[i].item_name)
 
             # update website url
-            self.labels[i][2].config(command=lambda url=self.items[i].website: self.open_url(url))
+            self.widgets[i][2].config(command=lambda url=self.items[i].website: self.open_url(url))
 
             # update find similar button
-            self.labels[i][3].config(
+            self.widgets[i][3].config(
                 command=lambda desc=self.items[i].item_description: self.find_similar_from_desc(desc))
 
     def image_from_url(self, url: str) -> PhotoImage | None:
