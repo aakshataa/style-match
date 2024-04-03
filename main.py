@@ -13,7 +13,16 @@ import image_to_text as f
 
 
 class StyleMatch:
-    """The application."""
+    """ When given a dataset, program will create a python interface where users can either upload their own images or search few words to find similar
+    items/styles in the coresponding datasbase. Program will display top 5 similar items and provide options for user to explore further items or can be 
+    connected to a website showing further details about it.
+    
+    Instance Attributes:
+    - graph: A weighted graph whose vertex all represent items from our database.
+    - window: The screen our data will be displayed on using tkinter
+    - items: Represents a list of all the weighted vertexes from our weighted graph
+    - dataset: A string linking to the dataset we are pulling information from
+    """
     graph: g.WeightedGraph
     window: Tk
     items: list[g.WeightedVertex]
@@ -22,7 +31,7 @@ class StyleMatch:
     widgets: dict[int, list]
 
     def __init__(self, dataset: str) -> None:
-        """Initialize variables, create/display a window, and start application."""
+        """Initialize variables, create/display a window, and starts our application."""
         self.graph = g.load_clothing_items(dataset)
         self.dataset = dataset
 
