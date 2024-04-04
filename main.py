@@ -139,7 +139,7 @@ class StyleMatch:
             pass
         else:
             # check if file path is valid
-            if file_path == "":
+            if file_path == "" or file_path is None:
                 return
             self.find_similar_from_image(file_path)
 
@@ -168,7 +168,7 @@ class StyleMatch:
         as Weighted Vertices."""
 
         photo_description = f.user_image_description(file_location)
-        print(photo_description)
+
         self.find_similar_from_desc(photo_description)
 
     def update_labels(self) -> None:
