@@ -1,0 +1,15 @@
+# Python libraries used in StyleMatch - CSC111 Project 2
+
+# Computations
+nltk
+csv
+
+# Graphics and data visualization
+tkinter
+PIL
+
+# Links
+Url lib
+Webbrowser
+uuid
+
