@@ -10,7 +10,7 @@ By allowing users to upload images of clothing articles they like, our platform 
 ### Running the program
 Once you launch the prorgam, the main page will feature the following buttons/items:
   <br>
-* A search bar, allows users to input keywords describing their desired outfit. If users lack a specific image, they can utilize this feature!
+* A search bar, which allows users to input keywords describing their desired outfit. If users lack a specific image, they can utilize this feature!
     * After inputting keywords, users must click the ”Search” button to initiate result generation.
   <br>
 * 5 images chosen at random from our ZARA database will be displayed.
@@ -19,7 +19,14 @@ Once you launch the prorgam, the main page will feature the following buttons/it
         * The secind enables users to explore other items with simialr styles
   <br>
 *  An upload button which facilitates direct image upload from the user’s directory.
-    * Users seeking a similar items to a specific item can upload an image andinitiate the search process by clicking the ”Search” button
+    * Users seeking a similar items to a specific item can upload an image andinitiate the search process by clicking the ”Search” button.
+  <br>
+* Furthermore, users have the option to double-click on any of the displayed images to access additional visuals of the same item.
+    * This includes images featuring models wearing the item as well as close-
+up shots highlighting finer details.
+    *  Additionally, a brief description of the item, accompanied by its
+pricing, is provided for user convenience.
+      
 
 
 
