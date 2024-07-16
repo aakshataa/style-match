@@ -8,6 +8,8 @@ To address this issue, we have developed a platform where users can upload image
 By allowing users to upload images of clothing articles they like, our platform seeks tostreamline the search process and enhance the shopper experience. This not only saves time for consumers, but  empowers them to explore a wider range of options that match their individual style!
 
 ### Running the program
+**Before launching our program, please refer to our requirement.txt to view all the necessary libaries to download.**
+  <br>
 Once you launch the prorgam, the main page will feature the following buttons/items:
   <br>
 * A search bar, which allows users to input keywords describing their desired outfit. If users lack a specific image, they can utilize this feature!
@@ -32,7 +34,6 @@ pricing, is provided for user convenience.
 
  ![interface](https://github.com/user-attachments/assets/59e58c61-e59a-4267-8faa-3f806cc03de3)
 
-![zoomed_in_pic](https://github.com/user-attachments/assets/5f79b33b-7f5e-4279-bf9e-8498fd89888a)
 
 
 
