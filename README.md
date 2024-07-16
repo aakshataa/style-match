@@ -27,9 +27,10 @@ Once you launch the prorgam, the main page will feature the following buttons/it
 up shots highlighting finer details.
     *  Additionally, a brief description of the item, accompanied by its
 pricing, is provided for user convenience.
-      
 
-![THE SHIRT](https://github.com/user-attachments/assets/2944eb54-51bb-430d-be3e-2e563fcfa68f)
+ ![interface](https://github.com/user-attachments/assets/59e58c61-e59a-4267-8faa-3f806cc03de3)
+
+
 
 
 
