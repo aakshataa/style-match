@@ -21,8 +21,7 @@ Once you launch the prorgam, the main page will feature the following buttons/it
 *  An upload button which facilitates direct image upload from the user’s directory.
     * Users seeking a similar items to a specific item can upload an image andinitiate the search process by clicking the ”Search” button.
   <br>
-*  An upload button which facilitates direct image upload from the user’s directory.
-    * Users seeking a similar items to a specific item can upload an image andinitiate the search process by clicking the ”Search” button.
+
 
 
 
