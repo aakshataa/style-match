@@ -1,4 +1,4 @@
-# style-match
+# Style-Match
 
 ### Introduction
 The fashion industry is increasingly moving towards personalized shopping experiences and greater convenience for consumers. However, finding similar clothing styles based on an image continues to be a significant challenge.  <br>
@@ -9,10 +9,20 @@ By allowing users to upload images of clothing articles they like, our platform 
 
 ### Running the program
 Once you launch the prorgam, the main page will feature the following buttons/items:
-
+  <br>
+* A search bar, allows users to input keywords describing their desired outfit. If users lack a specific image, they can utilize this feature!
+    * After inputting keywords, users must click the ”Search” button to initiate result generation.
+  <br>
 * 5 images chosen at random from our ZARA database will be displayed.
     * Each image will be accompanied by two buttons:
         * The first button directs users to the official ZARA website, providing access to further details such as availability and sizing
-        * The secind enables users to explore other items with simialr styles 
+        * The secind enables users to explore other items with simialr styles
+  <br>
+*  An upload button which facilitates direct image upload from the user’s directory.
+    * Users seeking a similar items to a specific item can upload an image andinitiate the search process by clicking the ”Search” button
+
+
+
+
 
 
