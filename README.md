@@ -12,13 +12,11 @@ Once you launch the prorgam, the main page will feature the following buttons/it
   <br>
 * A search bar, which allows users to input keywords describing their desired outfit. If users lack a specific image, they can utilize this feature!
     * After inputting keywords, users must click the ”Search” button to initiate result generation.
-  ![menu](https://github.com/user-attachments/assets/7247083b-4463-4d44-8ac8-7992da931fe8)
 <br>
 * 5 images chosen at random from our ZARA database will be displayed.
     * Each image will be accompanied by two buttons:
         * The first button directs users to the official ZARA website, providing access to further details such as availability and sizing
         * The secind enables users to explore other items with simialr styles
-![zoomed_in_pic](https://github.com/user-attachments/assets/5f79b33b-7f5e-4279-bf9e-8498fd89888a)
   <br>
 *  An upload button which facilitates direct image upload from the user’s directory.
     * Users seeking a similar items to a specific item can upload an image andinitiate the search process by clicking the ”Search” button.
@@ -34,7 +32,7 @@ pricing, is provided for user convenience.
 
  ![interface](https://github.com/user-attachments/assets/59e58c61-e59a-4267-8faa-3f806cc03de3)
 
-
+![zoomed_in_pic](https://github.com/user-attachments/assets/5f79b33b-7f5e-4279-bf9e-8498fd89888a)
 
 
 
