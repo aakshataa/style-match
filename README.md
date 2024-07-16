@@ -28,6 +28,8 @@ up shots highlighting finer details.
     *  Additionally, a brief description of the item, accompanied by its
 pricing, is provided for user convenience.
 
+#### Sample image of tnterface
+
  ![interface](https://github.com/user-attachments/assets/59e58c61-e59a-4267-8faa-3f806cc03de3)
 
 
