@@ -21,7 +21,8 @@ Once you launch the prorgam, the main page will feature the following buttons/it
 *  An upload button which facilitates direct image upload from the user’s directory.
     * Users seeking a similar items to a specific item can upload an image andinitiate the search process by clicking the ”Search” button.
   <br>
-  
+  ![THE SHIRT](https://github.com/user-attachments/assets/b4856cd8-7d62-4aa0-bffc-9efea4e00a01)
+
 * Furthermore, users have the option to double-click on any of the displayed images to access additional visuals of the same item.
     * This includes images featuring models wearing the item as well as close-
 up shots highlighting finer details.
