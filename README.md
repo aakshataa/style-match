@@ -17,8 +17,8 @@ Once you launch the prorgam, the main page will feature the following buttons/it
   <br>
 * 5 images chosen at random from our ZARA database will be displayed.
     * Each image will be accompanied by two buttons:
-        * The first button directs users to the official ZARA website, providing access to further details such as availability and sizing
-        * The secind enables users to explore other items with simialr styles
+        * The first button, "website", directs users to the official ZARA website, providing access to further details such as availability and sizing
+        * The second button, "find similar" enables users to explore other items with simialr styles
   <br>
 *  An upload button which facilitates direct image upload from the user’s directory.
     * Users seeking a similar items to a specific item can upload an image andinitiate the search process by clicking the ”Search” button.
